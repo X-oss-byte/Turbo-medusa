@@ -1,6 +1,7 @@
 import { generateEntityId } from "@medusajs/utils"
 import {
   BeforeCreate,
+  Cascade,
   Entity,
   ManyToOne,
   PrimaryKey,
@@ -8,6 +9,7 @@ import {
 } from "@mikro-orm/core"
 
 import Currency from "./currency"
+import PriceList from "./price-list"
 
 @Entity()
 class MoneyAmount {
@@ -32,6 +34,17 @@ class MoneyAmount {
 
   @Property({ columnType: "numeric", nullable: true })
   max_quantity?: number | null
+
+  @Property({ columnType: "text", nullable: true })
+  price_list_id: string | null
+
+  @ManyToOne({
+    entity: () => PriceList,
+    nullable: true,
+    cascade: [Cascade.REMOVE],
+    index: "IDX_money_amount_price_list_id",
+  })
+  price_list: PriceList | null
 
   @BeforeCreate()
   onCreate() {
