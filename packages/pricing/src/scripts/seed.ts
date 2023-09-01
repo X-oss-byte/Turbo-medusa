@@ -22,7 +22,7 @@ export async function run({
 
   logger.info(`Loading seed data from ${path}...`)
 
-  const { currenciesData, moneyAmountsData } = await import(
+  const { currenciesData, moneyAmountsData, priceListData } = await import(
     resolve(process.cwd(), path)
   ).catch((e) => {
     logger?.error(
@@ -47,6 +47,7 @@ export async function run({
     logger.info("Inserting currencies & money_amounts")
 
     await createCurrencies(manager, currenciesData)
+    await createPriceLists(manager, priceListData)
     await createMoneyAmounts(manager, moneyAmountsData)
   } catch (e) {
     logger.error(
@@ -68,6 +69,19 @@ async function createCurrencies(
   await manager.persistAndFlush(currencies)
 
   return currencies
+}
+
+async function createPriceLists(
+  manager: SqlEntityManager,
+  data: RequiredEntityData<PricingModels.PriceList>[]
+) {
+  const priceLists = data.map((priceListData) => {
+    return manager.create(PricingModels.PriceList, priceListData)
+  })
+
+  await manager.persistAndFlush(priceLists)
+
+  return priceLists
 }
 
 async function createMoneyAmounts(
