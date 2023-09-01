@@ -18,6 +18,7 @@ import {
 
 import { joinerConfig } from "../joiner-config"
 import PriceListService from "./price-list"
+import { partition } from "lodash"
 
 type InjectedDependencies = {
   baseRepository: DAL.RepositoryService
@@ -261,7 +262,6 @@ export default class PricingModuleService<
     await this.currencyService_.delete(currencyCodes, sharedContext)
   }
 
-
   @InjectManager("baseRepository_")
   async retrievePriceList(
     code: string,
@@ -274,9 +274,12 @@ export default class PricingModuleService<
       sharedContext
     )
 
-    return this.baseRepository_.serialize<PricingTypes.PriceListDTO>(priceList, {
-      populate: true,
-    })
+    return this.baseRepository_.serialize<PricingTypes.PriceListDTO>(
+      priceList,
+      {
+        populate: true,
+      }
+    )
   }
 
   @InjectManager("baseRepository_")
@@ -327,19 +330,24 @@ export default class PricingModuleService<
     data: PricingTypes.CreatePriceListDTO[],
     @MedusaContext() sharedContext: Context = {}
   ) {
-    const priceLists = await Promise.all(data.map(async (priceList) => {
-      const { prices, ...rest } = priceList
-      const [createdPriceList] = await this.priceListService_.create(rest, sharedContext)
+    const priceLists = await Promise.all(
+      data.map(async (priceList) => {
+        const { prices, ...rest } = priceList
+        const [createdPriceList] = await this.priceListService_.create(
+          rest,
+          sharedContext
+        )
 
-      const moneyAmounts = await this.moneyAmountService_.addPriceListPrices(
-        createdPriceList.id,
-        prices
-      )
+        const moneyAmounts = await this.moneyAmountService_.addPriceListPrices(
+          createdPriceList.id,
+          prices
+        )
 
-      createdPriceList.prices = moneyAmounts
+        createdPriceList.prices = moneyAmounts
 
-      return createdPriceList
-    }))
+        return createdPriceList
+      })
+    )
 
     return this.baseRepository_.serialize<PricingTypes.PriceListDTO[]>(
       priceLists,
@@ -354,10 +362,32 @@ export default class PricingModuleService<
     data: PricingTypes.UpdatePriceListDTO[],
     @MedusaContext() sharedContext: Context = {}
   ) {
-    const priceLists = await this.priceListService_.update(data, sharedContext)
+    const [priceLists, prices] = data.reduce(
+      (acc, priceList) => {
+        const { prices, ...rest } = priceList
+        acc[0].push(rest)
+        acc[1].push(
+          ...prices.map((p) => ({ ...p, price_list_id: priceList.id }))
+        )
+        return acc
+      },
+      [[], []]
+    )
+
+    const updatedPriceLists = await this.priceListService_.update(
+      priceLists,
+      sharedContext
+    )
+
+    const [existingPrices, newPrices] = partition(prices, (p) => p.id)
+
+    await Promise.all([
+      this.moneyAmountService_.update(existingPrices, sharedContext),
+      this.moneyAmountService_.create(newPrices, sharedContext),
+    ])
 
     return this.baseRepository_.serialize<PricingTypes.PriceListDTO[]>(
-      priceLists,
+      updatedPriceLists,
       {
         populate: true,
       }
