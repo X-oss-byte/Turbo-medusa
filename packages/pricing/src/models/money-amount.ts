@@ -12,12 +12,11 @@ import {
 import Currency from "./currency"
 import PriceList from "./price-list"
 
-type OptionalRelations = "price_list"
+type OptionalRelations = "price_list" | "currency"
 type OptionalFields =
   | "min_quantity"
   | "max_quantity"
   | "price_list_id"
-  | "currency"
   | "created_at"
   | "updated_at"
 @Entity()
