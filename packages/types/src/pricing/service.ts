@@ -4,12 +4,16 @@ import { Context } from "../shared-context"
 import {
   CreateCurrencyDTO,
   CreateMoneyAmountDTO,
+  CreatePriceListDTO,
   CurrencyDTO,
   FilterableCurrencyProps,
   FilterableMoneyAmountProps,
+  FilterablePriceListProps,
   MoneyAmountDTO,
+  PriceListDTO,
   UpdateCurrencyDTO,
   UpdateMoneyAmountDTO,
+  UpdatePriceListDTO,
 } from "./common"
 
 export interface IPricingModuleService {
@@ -74,6 +78,39 @@ export interface IPricingModuleService {
   ): Promise<CurrencyDTO[]>
 
   deleteCurrencies(
+    currencyCodes: string[],
+    sharedContext?: Context
+  ): Promise<void>
+
+  retrievePriceList(
+    code: string,
+    config: FindConfig<PriceListDTO>,
+    sharedContext?: Context
+  ): Promise<PriceListDTO> 
+
+  listPriceLists(
+    filters: FilterablePriceListProps,
+    config: FindConfig<PriceListDTO>,
+    sharedContext?: Context
+  ): Promise<PriceListDTO[]> 
+
+  listAndCountPriceLists(
+    filters: FilterablePriceListProps,
+    config: FindConfig<PriceListDTO>,
+    sharedContext?: Context
+  ): Promise<[PriceListDTO[], number]> 
+
+  createPriceLists(
+    data: CreatePriceListDTO[],
+    sharedContext?: Context
+  ) : Promise<PriceListDTO[]>
+
+  updatePriceLists(
+    data: UpdatePriceListDTO[],
+    sharedContext?: Context
+  ) : Promise<PriceListDTO[]>
+
+  deletePriceLists(
     currencyCodes: string[],
     sharedContext?: Context
   ): Promise<void>
