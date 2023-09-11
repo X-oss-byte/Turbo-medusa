@@ -1,5 +1,15 @@
 # @medusajs/types
 
+## 1.11.1
+
+### Patch Changes
+
+- [#4961](https://github.com/medusajs/medusa/pull/4961) [`6273b4b16`](https://github.com/medusajs/medusa/commit/6273b4b160493463e1199e5db4e9cfa4cff6fbe4) Thanks [@adrien2p](https://github.com/adrien2p)! - feat(utils, module-sdk, medusa, types): Extract pg connection utils to utils package
+
+- [#4990](https://github.com/medusajs/medusa/pull/4990) [`a87d07655`](https://github.com/medusajs/medusa/commit/a87d07655bd8a1da8b90feb739daddd09295f724) Thanks [@adrien2p](https://github.com/adrien2p)! - fix(link-modules): Fix link module initialization
+
+- [#4978](https://github.com/medusajs/medusa/pull/4978) [`834da5c41`](https://github.com/medusajs/medusa/commit/834da5c41a7c043373f72239b6fdbf7815d9b4aa) Thanks [@riqwan](https://github.com/riqwan)! - feat(pricing,types,link-modules): PriceSets as an entry point to pricing module
+
 ## 1.11.0
 
 ### Minor Changes

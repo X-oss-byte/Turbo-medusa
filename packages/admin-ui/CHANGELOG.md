@@ -1,5 +1,11 @@
 # @medusajs/admin-ui
 
+## 2.0.3
+
+### Patch Changes
+
+- [#4939](https://github.com/medusajs/medusa/pull/4939) [`87e3a7d06`](https://github.com/medusajs/medusa/commit/87e3a7d06ae76b6bee92b1bb97d0c8f8da07d4e9) Thanks [@jporsay](https://github.com/jporsay)! - correctly skipping analytics when user opted out
+
 ## 2.0.2
 
 ### Patch Changes
